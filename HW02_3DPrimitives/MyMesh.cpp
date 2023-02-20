@@ -61,7 +61,24 @@ void MyMesh::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivisions,
 	Init();
 
 	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
+	float fDelta = 2.0 * PI / static_cast<float>(a_nSubdivisions);
+	std::vector<vector3> pointlist;
+	for (uint i = 0; i < a_nSubdivisions; i++)
+	{
+		vector3 vertex = vector3(glm::cos(fDelta * i) * a_fRadius, glm::sin(fDelta * i) * a_fRadius, 0.0f);
+		pointlist.push_back(vertex);
+	}
+
+	for (uint i = 0; i < a_nSubdivisions; i++)
+	{
+		AddTri(vector3(0.0,0.0, a_fHeight), pointlist[(i + 1) % a_nSubdivisions], pointlist[i]);
+	}
+
+	for (uint i = 0; i < a_nSubdivisions; i++)
+	{
+		AddTri(ZERO_V3, pointlist[i], pointlist[(i + 1) % a_nSubdivisions]);
+	}
+
 	// -------------------------------
 
 	// Adding information about color
@@ -84,8 +101,33 @@ void MyMesh::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubdivisi
 	Release();
 	Init();
 
-	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
+	float fDelta = 2.0 * PI / static_cast<float>(a_nSubdivisions);
+	std::vector<vector3> pointlist;
+	for (uint i = 0; i < a_nSubdivisions; i++)
+	{
+		vector3 vertex = vector3(glm::cos(fDelta * i) * a_fRadius, glm::sin(fDelta * i) * a_fRadius, 0.0f);
+		pointlist.push_back(vertex);
+	}
+
+	//for (uint i = 0; i < a_nSubdivisions; i++)
+	//{
+	//	AddTri(vector3(0.0, 0.0, a_fHeight), pointlist[(i + 1) % a_nSubdivisions], pointlist[i]);
+	//}
+
+
+	for (uint i = 0; i < a_nSubdivisions; i++)
+	{
+		AddTri(ZERO_V3, pointlist[(i + 1) % a_nSubdivisions], pointlist[i]);
+	}
+
+	for (uint i = 0; i < a_nSubdivisions; i++)
+	{
+		AddQuad( pointlist[i], pointlist[(i + 1) % a_nSubdivisions], vector3(pointlist[i].x, pointlist[i].y , pointlist[i].z + a_fHeight), vector3(pointlist[(i + 1) % a_nSubdivisions].x, pointlist[(i + 1) % a_nSubdivisions].y, pointlist[(i + 1) % a_nSubdivisions].z + a_fHeight));
+	}
+	for (uint i = 0; i < a_nSubdivisions; i++)
+	{
+		AddTri(vector3(0.0, 0.0, a_fHeight), vector3(pointlist[i].x, pointlist[i].y, pointlist[i].z + a_fHeight), vector3(pointlist[(i + 1) % a_nSubdivisions].x, pointlist[(i + 1) % a_nSubdivisions].y, pointlist[(i + 1) % a_nSubdivisions].z + a_fHeight));
+	}
 	// -------------------------------
 
 	// Adding information about color
@@ -115,7 +157,45 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 	Init();
 
 	// Replace this with your code
-	GenerateCube(a_fOuterRadius * 2.0f, a_v3Color);
+	float fDelta = 2.0 * PI / static_cast<float>(a_nSubdivisions);
+	std::vector<vector3> outerpointlist;
+	for (uint i = 0; i < a_nSubdivisions; i++)
+	{
+		vector3 vertex = vector3(glm::cos(fDelta * i) * a_fOuterRadius, glm::sin(fDelta * i) * a_fOuterRadius, 0.0f);
+		outerpointlist.push_back(vertex);
+	}
+
+	std::vector<vector3> innerpointlist;
+	for (uint i = 0; i < a_nSubdivisions; i++)
+	{
+		vector3 vertex = vector3(glm::cos(fDelta * i) * a_fInnerRadius, glm::sin(fDelta * i) * a_fInnerRadius, 0.0f);
+		innerpointlist.push_back(vertex);
+	}
+
+	//for (uint i = 0; i < a_nSubdivisions; i++)
+	//{
+	//	AddTri(vector3(0.0, 0.0, a_fHeight), pointlist[(i + 1) % a_nSubdivisions], pointlist[i]);
+	//}
+
+
+	for (uint i = 0; i < a_nSubdivisions; i++)
+	{
+		AddQuad( outerpointlist[(i + 1) % a_nSubdivisions], outerpointlist[i], innerpointlist[(i + 1) % a_nSubdivisions], innerpointlist[i]);
+	}
+
+	for (uint i = 0; i < a_nSubdivisions; i++)
+	{
+		AddQuad(outerpointlist[i], outerpointlist[(i + 1) % a_nSubdivisions], vector3(outerpointlist[i].x, outerpointlist[i].y, outerpointlist[i].z + a_fHeight), vector3(outerpointlist[(i + 1) % a_nSubdivisions].x, outerpointlist[(i + 1) % a_nSubdivisions].y, outerpointlist[(i + 1) % a_nSubdivisions].z + a_fHeight));
+	}
+
+	for (uint i = 0; i < a_nSubdivisions; i++)
+	{
+		AddQuad(vector3(innerpointlist[i].x, innerpointlist[i].y, innerpointlist[i].z + a_fHeight), vector3(innerpointlist[(i + 1) % a_nSubdivisions].x, innerpointlist[(i + 1) % a_nSubdivisions].y, innerpointlist[(i + 1) % a_nSubdivisions].z + a_fHeight), innerpointlist[i], innerpointlist[(i + 1) % a_nSubdivisions]);
+	}
+	for (uint i = 0; i < a_nSubdivisions; i++)
+	{
+		AddQuad(vector3(innerpointlist[(i + 1) % a_nSubdivisions].x, innerpointlist[(i + 1) % a_nSubdivisions].y, innerpointlist[(i + 1) % a_nSubdivisions].z + a_fHeight), vector3(innerpointlist[i].x, innerpointlist[i].y, innerpointlist[i].z + a_fHeight), vector3(outerpointlist[(i + 1) % a_nSubdivisions].x, outerpointlist[(i + 1) % a_nSubdivisions].y, outerpointlist[(i + 1) % a_nSubdivisions].z + a_fHeight), vector3(outerpointlist[i].x, outerpointlist[i].y, outerpointlist[i].z + a_fHeight));
+	}
 	// -------------------------------
 
 	// Adding information about color
@@ -171,8 +251,20 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 	Release();
 	Init();
 
-	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
+
+	float fDelta = 2.0 * PI / static_cast<float>(a_nSubdivisions);
+	std::vector<vector3> pointlist;
+	for (uint i = 0; i < a_nSubdivisions; i++)
+	{
+		vector3 vertex = vector3(glm::cos(fDelta * i) * a_fRadius, glm::sin(fDelta * i) * a_fRadius, 0.0f);
+		pointlist.push_back(vertex);
+	}
+
+	for (uint i = 0; i < a_nSubdivisions - 1; i++)
+	{
+		AddTri(ZERO_V3, pointlist[i], pointlist[i + 1]);
+	}
+	AddTri(ZERO_V3, pointlist[a_nSubdivisions -1], pointlist[0]);
 	// -------------------------------
 
 	// Adding information about color
